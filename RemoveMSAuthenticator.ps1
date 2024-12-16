@@ -8,7 +8,7 @@
 Import-Module Microsoft.Graph.Users 
 Import-Module Microsoft.Graph.Groups
 Import-Module Microsoft.Graph.Identity.SignIns
-
+Import-Module Microsoft.Graph.Beta.Identity.SignIns
 ## Function 
 function Remove-MSAuthenticator {
     param(
