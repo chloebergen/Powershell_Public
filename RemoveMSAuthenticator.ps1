@@ -26,6 +26,10 @@ function Remove-MSAuthenticator {
                 if ($methodIds.count -gt 0) {
                     foreach ($authId in $methodIds) {
                         Write-Host "Removing $($authId) from $($userPrincipalName)" -ForegroundColor Green
+                        $params = @{
+                            userPreferredMethodForSecondaryAuthentication = "sms"
+                        }
+                        Update-MgBetaUserAuthenticationSignInPreference -UserId $userId -BodyParameter $params
                         Remove-MgUserAuthenticationMicrosoftAuthenticatorMethod -MicrosoftAuthenticatorAuthenticationMethodId $authId -userId $userPrincipalName
                     }
                 } else {
