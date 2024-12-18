@@ -2,13 +2,14 @@
     .Iterates through a list of privileged access groups in AD and prints out a report of their current members as a CSV.
 #>
 
-function Get-PrivilegedGroupReport {
+function Get-PrivilegedGroupsReport {
     param(
         [Parameter(Mandatory=$true)]
         [string]$domain
     )
     ## Outfile & initial empty array
-    $output = "PrivilegedGroupsReport.csv"
+    $time = Get-Date -Format 'yyyy-MM-dd_HH-mm-ss'
+    $output = "PrivilegedGroupsReport_" + $domain + "_" + $time + ".csv"
     $results = @()
 
     ## Privileged group list ->
