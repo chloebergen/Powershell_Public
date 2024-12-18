@@ -1,5 +1,6 @@
 <#
     .Iterates through a list of privileged access groups in AD and prints out a report of their current members as a CSV.
+    .Usage: 'Get-PrivilegedGroupsReport -Domain YourDomain.local'
 #>
 
 function Get-PrivilegedGroupsReport {
