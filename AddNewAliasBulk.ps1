@@ -1,5 +1,6 @@
 <#
     .Iterates through all mailboxes in an existing Exchange Online tenant, adding a new alias to all mailboxes as defined in $NewAliasSuffix
+    .Example usage: Add-NewAlias -NewAliasSuffix mynewdomain.com
     .Author: github.com/chloebergen
 #>
 function Add-NewAlias {
