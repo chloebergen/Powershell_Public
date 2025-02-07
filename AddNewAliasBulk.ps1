@@ -12,18 +12,22 @@ function Add-NewAlias {
     # Loop through each mailbox, extract the username from the existing primary SMTP address, then combine the username with the new domain suffix. 
     $Mailboxes = Get-Mailbox -ResultSize Unlimited
     foreach ($Mailbox in $Mailboxes) {
-        $PrimarySMTP = $Mailbox.PrimarySmtpAddress.ToString()
-        $Username = $PrimarySMTP.Split("@")[0]
-        $NewAlias = "$Username@$NewAliasSuffix"
-
-        # Get existing email addresses and check if the alias already exists; if it doesn't - add the new aliases 
-        $EmailAddresses = $Mailbox.EmailAddresses
-        if ($EmailAddresses -notcontains "smtp:$NewAlias") {
-            $EmailAddresses += "smtp:$NewAlias"
-            Set-Mailbox -Identity $Mailbox.Alias -EmailAddresses $EmailAddresses
-            Write-Host "Added alias $NewAlias to $PrimarySMTP" -ForegroundColor Green
-        } else {
-            Write-Host "Alias $NewAlias already exists for $PrimarySMTP" -ForegroundColor Yellow
+        try {
+            $PrimarySMTP = $Mailbox.PrimarySmtpAddress.ToString()
+            $Username = $PrimarySMTP.Split("@")[0]
+            $NewAlias = "$Username@$NewAliasSuffix"
+            $EmailAddresses = $Mailbox.EmailAddresses
+            
+            # Get existing email addresses and check if the alias already exists; if it doesn't - add the new aliases 
+            if ($EmailAddresses -notcontains "smtp:$NewAlias") {
+                $EmailAddresses += "smtp:$NewAlias"
+                Set-Mailbox -Identity $Mailbox.Alias -EmailAddresses $EmailAddresses
+                Write-Host "Added alias $NewAlias to $PrimarySMTP" -ForegroundColor Green
+            } else {
+                Write-Host "Alias $NewAlias already exists for $PrimarySMTP" -ForegroundColor Yellow
+            }
+        } catch {
+            Write-Warning "Alias modification failed for '$PrimarySMTP'. Error: $_"
         }
     }
 
