@@ -12,8 +12,10 @@ Import-Module Microsoft.Graph.Users
 Import-Module Microsoft.Graph.Groups
 Import-Module Microsoft.Graph.Identity.SignIns
 Import-Module ExchangeOnlineManagement
-Connect-ExchangeOnline
-Connect-MgGraph -Scopes "User.ReadWrite.All","Group.ReadWrite.All","AuditLog.Read.All"
+Write-Host "`nConnecting to ExchangeOnline..." -ForegroundColor Blue
+Connect-ExchangeOnline -ShowBanner:$false
+Write-Host "`nConnecting to Microsoft Graph..." -ForegroundColor Blue
+Connect-MgGraph -Scopes "User.ReadWrite.All","Group.ReadWrite.All","AuditLog.Read.All" -NoWelcome
 
 function Update-ExchangeOnlineObjects {
     param(
