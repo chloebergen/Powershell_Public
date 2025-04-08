@@ -243,7 +243,7 @@ if ($MigrateMailboxes) {
             try {
                 Set-Mailbox -Identity $user.Identity -EmailAddresses $updatedEmailAddresses -ErrorAction Stop
                 
-                # Add to our collection of wins
+                # Add to our array of successes
                 $updatedUsers += [PSCustomObject]@{
                     DisplayName = $user.DisplayName
                     OldPrimary = $primaryEmail
@@ -256,7 +256,7 @@ if ($MigrateMailboxes) {
             } catch {
                 Write-Host "  Error: $_" -ForegroundColor Red
                 
-                # Track the fails too
+                # Add to our array of failures
                 $updatedUsers += [PSCustomObject]@{
                     DisplayName = $user.DisplayName
                     OldPrimary = $primaryEmail
