@@ -5,7 +5,7 @@
     .Migrates Exchange Online mailboxes, distribution groups, dynamic distribution groups, unified groups
         .Exchange Online mailboxes will have their primary SMTP address updated to the new suffix, and the old primary SMTP will be added as an alias.
     .USAGE: Update-ExchangeOnlineObjects -oldSuffix "olddomain.com" -newSuffix "newdomain.com" -MigrateMailboxes -MigrateUnifiedGroups -MigrateDistributionGroups -MigrateDynamicDistributionGroups
-    .USAGE: Update-CloudUsers -oldSuffix "olddomain.com" -newSuffix "newdomain.com" -groupId "00000000-0000-0000-0000-000000000000" -MigrateCloudUsers
+    .USAGE: Update-CloudUsers -oldSuffix "olddomain.com" -newSuffix "newdomain.com" -groupId "00000000-0000-0000-0000-000000000000" -MigrateUsers
 #>
 
 Import-Module Microsoft.Graph.Users 
@@ -204,11 +204,9 @@ if ($MigrateUnifiedGroups) {
 ### Migrate Mailboxes
 if ($MigrateMailboxes) {
     $mailboxList = Get-ExoMailbox -ResultSize Unlimited
-
     $updatedUsers = @() # tracks completion
-
     $updatedEmailAddresses = @()
-
+    Write-Host "`nIdentifying emails with the old suffix..." -ForegroundColor Cyan
     foreach ($user in $mailboxList) {
         # New array containing user emails
         $emailArray = @($user.EmailAddresses)
@@ -236,7 +234,7 @@ if ($MigrateMailboxes) {
             $oldSecondaryEmail = $primaryEmail -replace "SMTP:", "smtp:"
             $updatedEmailAddresses += $oldSecondaryEmail
             
-            Write-Host "Updating $primaryEmail → $newPrimaryEmail" -ForegroundColor Magenta
+            Write-Host "Updating $primaryEmail -> $newPrimaryEmail" -ForegroundColor Magenta
             
             # Actually updating the user 
             try {
