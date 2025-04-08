@@ -28,7 +28,7 @@ function Update-ExchangeOnlineObjects {
     )
 
 # Banner
-Write-Host "EMAIL DOMAIN Migration: $oldSuffix → $newSuffix" -ForegroundColor Cyan
+Write-Host "`nDOMAIN Migration: $oldSuffix -> $newSuffix" -ForegroundColor Cyan
 Write-Host "Starting migration process..." -ForegroundColor Magenta
 
 ### Migrate Distribution Groups
@@ -45,9 +45,9 @@ if ($MigrateDistributionGroups) {
                 Set-DistributionGroup -Identity $group.PrimarySmtpAddress -PrimarySmtpAddress $newPrimarySmtpAddress 
                 # Add to our array of successes
                 $updatedDistributionGroups += [PSCustomObject]@{
-                    DisplayName = $cloudUser.DisplayName
-                    OldPrimary = $primaryEmail
-                    NewPrimary = $newPrimaryEmail
+                    DisplayName = $group.DisplayName
+                    OldPrimary = $group.PrimarySmtpAddress
+                    NewPrimary = $newPrimarySmtpAddress
                     Status = "Success"
                     TimeUpdated = Get-Date
                 }
@@ -56,9 +56,9 @@ if ($MigrateDistributionGroups) {
                 Write-Error "$_. | on $($group.DisplayName)." -ForegroundColor Red
                 # Add to our array of failures
                 $updatedDistributionGroups += [PSCustomObject]@{
-                    DisplayName = $cloudUser.DisplayName
-                    OldPrimary = $primaryEmail
-                    NewPrimary = $newPrimaryEmail
+                    DisplayName = $group.DisplayName
+                    OldPrimary = $group.PrimarySmtpAddress
+                    NewPrimary = $newPrimarySmtpAddress
                     Status = "Failed: $_"
                     TimeUpdated = Get-Date
                 }
@@ -67,11 +67,11 @@ if ($MigrateDistributionGroups) {
     }
 
     # Success & failure count
-    $successCount = ($updatedDistributionGroups | Where-Object { $_.Status -eq "Success" }).Count
-    $failCount = ($updatedDistributionGroups | Where-Object { $_.Status -ne "Success" }).Count
+    $successCount = @($updatedDistributionGroups | Where-Object { $_.Status -eq "Success" }).Count
+    $failCount = @($updatedDistributionGroups | Where-Object { $_.Status -ne "Success" }).Count
     $totalCount = $successCount + $failCount
 
-    Write-Host "DISTRIBUTION GROUP MIGRATION REPORT" -ForegroundColor Cyan
+    Write-Host "`nDISTRIBUTION GROUP MIGRATION REPORT" -ForegroundColor Cyan
     Write-Host "Total accounts processed: $totalCount" -ForegroundColor White
     Write-Host "Successful migrations: $successCount" -ForegroundColor Green
     Write-Host "Failed migrations: $failCount" -ForegroundColor Red
@@ -101,9 +101,9 @@ if ($MigrateDynamicDistributionGroups) {
                 
                 # Add to our array of successes
                 $updatedDynamicDistributionGroups += [PSCustomObject]@{
-                    DisplayName = $cloudUser.DisplayName
-                    OldPrimary = $primaryEmail
-                    NewPrimary = $newPrimaryEmail
+                    DisplayName = $dynamicDistributionGroup.DisplayName
+                    OldPrimary = $dynamicDistributionGroup.PrimarySmtpAddress
+                    NewPrimary = $newPrimarySmtpAddress
                     Status = "Success"
                     TimeUpdated = Get-Date
                 }                
@@ -114,9 +114,9 @@ if ($MigrateDynamicDistributionGroups) {
 
                 # Add to our array of failures
                 $updatedDynamicDistributionGroups += [PSCustomObject]@{
-                    DisplayName = $cloudUser.DisplayName
-                    OldPrimary = $primaryEmail
-                    NewPrimary = $newPrimaryEmail
+                    DisplayName = $dynamicDistributionGroup.DisplayName
+                    OldPrimary = $dynamicDistributionGroup.PrimarySmtpAddress
+                    NewPrimary = $newPrimarySmtpAddress
                     Status = "Failed: $_"
                     TimeUpdated = Get-Date
                 }
@@ -125,11 +125,11 @@ if ($MigrateDynamicDistributionGroups) {
     }
 
     # Success & failure count
-    $successCount = ($updatedDynamicDistributionGroups | Where-Object { $_.Status -eq "Success" }).Count
-    $failCount = ($updatedDynamicDistributionGroups | Where-Object { $_.Status -ne "Success" }).Count
+    $successCount = @($updatedDynamicDistributionGroups | Where-Object { $_.Status -eq "Success" }).Count
+    $failCount = @($updatedDynamicDistributionGroups | Where-Object { $_.Status -ne "Success" }).Count
     $totalCount = $successCount + $failCount
 
-    Write-Host "DYNAMIC DISTRIBUTION GROUP MIGRATION REPORT" -ForegroundColor Cyan
+    Write-Host "`nDYNAMIC DISTRIBUTION GROUP MIGRATION REPORT" -ForegroundColor Cyan
     Write-Host "Total accounts processed: $totalCount" -ForegroundColor White
     Write-Host "Successful migrations: $successCount" -ForegroundColor Green
     Write-Host "Failed migrations: $failCount" -ForegroundColor Red
@@ -159,8 +159,8 @@ if ($MigrateUnifiedGroups) {
 
                 # Add to our array of successes
                 $updatedUnifiedGroups += [PSCustomObject]@{
-                    DisplayName = $cloudUser.DisplayName
-                    OldPrimary = $primaryEmail
+                    DisplayName = $unifiedGroup.DisplayName
+                    OldPrimary = $unifiedGroup.PrimarySmtpAddress
                     NewPrimary = $newPrimaryEmail
                     Status = "Success"
                     TimeUpdated = Get-Date
@@ -170,8 +170,8 @@ if ($MigrateUnifiedGroups) {
             } catch {
                 Write-Error "$_. | on $($unifiedGroup.DisplayName)." -ForegroundColor Red
                 $updatedUnifiedGroups += [PSCustomObject]@{
-                    DisplayName = $cloudUser.DisplayName
-                    OldPrimary = $primaryEmail
+                    DisplayName = $unifiedGroup.DisplayName
+                    OldPrimary = $unifiedGroup.PrimarySmtpAddress
                     NewPrimary = $newPrimaryEmail
                     Status = "Failed: $_"
                     TimeUpdated = Get-Date
@@ -180,11 +180,11 @@ if ($MigrateUnifiedGroups) {
         }
     }
     # Success & failure count
-    $successCount = ($updatedUnifiedGroups | Where-Object { $_.Status -eq "Success" }).Count
-    $failCount = ($updatedUnifiedGroups | Where-Object { $_.Status -ne "Success" }).Count
+    $successCount = @($updatedUnifiedGroups | Where-Object { $_.Status -eq "Success" }).Count
+    $failCount = @($updatedUnifiedGroups | Where-Object { $_.Status -ne "Success" }).Count
     $totalCount = $successCount + $failCount
 
-    Write-Host "UNIFIED GROUP MIGRATION REPORT" -ForegroundColor Cyan
+    Write-Host "`nUNIFIED GROUP MIGRATION REPORT" -ForegroundColor Cyan
     Write-Host "Total accounts processed: $totalCount" -ForegroundColor White
     Write-Host "Successful migrations: $successCount" -ForegroundColor Green
     Write-Host "Failed migrations: $failCount" -ForegroundColor Red
@@ -207,7 +207,7 @@ if ($MigrateMailboxes) {
 
     $updatedUsers = @() # tracks completion
 
-    $mailboxesWithOldEmail = @() # for troubleshooting if needed
+    $updatedEmailAddresses = @()
 
     foreach ($user in $mailboxList) {
         # New array containing user emails
@@ -219,7 +219,7 @@ if ($MigrateMailboxes) {
         # Check for old domain suffix
         if ($primaryEmail) {
             Write-Host "Found old email for: $($user.DisplayName)" -ForegroundColor Cyan
-            $mailboxesWithOldEmail += $user
+
             # Picks out the secondary SMTP
             $secondaryEmail = $emailArray | Where-Object { $_ -cmatch "^smtp:$username@$newSuffix$" }
 
@@ -227,7 +227,7 @@ if ($MigrateMailboxes) {
             $newPrimaryEmail = $primaryEmail -replace "@$oldSuffix", "@$newSuffix"
             
             # Remove the old primary and secondary
-            $updatedEmailAddresses = $emailArray | Where-Object { $_ -ne $primaryEmail -and $_ -ne $secondaryEmail }
+            $updatedEmailAddresses += $emailArray | Where-Object { $_ -ne $primaryEmail -and $_ -ne $secondaryEmail }
 
             # Add the new primary email
             $updatedEmailAddresses += $newPrimaryEmail
@@ -268,11 +268,11 @@ if ($MigrateMailboxes) {
     }
 
     # Success & failure count
-    $successCount = ($updatedUsers | Where-Object { $_.Status -eq "Success" }).Count
-    $failCount = ($updatedUsers | Where-Object { $_.Status -ne "Success" }).Count
+    $successCount = @($updatedUsers | Where-Object { $_.Status -eq "Success" }).Count
+    $failCount = @($updatedUsers | Where-Object { $_.Status -ne "Success" }).Count
     $totalCount = $successCount + $failCount
 
-    Write-Host "MAILBOX MIGRATION REPORT" -ForegroundColor Cyan
+    Write-Host "`nMAILBOX MIGRATION REPORT" -ForegroundColor Cyan
     Write-Host "Total accounts processed: $totalCount" -ForegroundColor White
     Write-Host "Successful migrations: $successCount" -ForegroundColor Green
     Write-Host "Failed migrations: $failCount" -ForegroundColor Red
@@ -317,10 +317,10 @@ function Update-CloudUsers {
                     Update-MgUser -UserId $existingCloudUser.Id -UserPrincipalName $newUPN
 
                      # Add to our array of successes
-                        $updatedCloudUsers += [PSCustomObject]@{
+                    $updatedCloudUsers += [PSCustomObject]@{
                         DisplayName = $cloudUser.DisplayName
-                        OldPrimary = $primaryEmail
-                        NewPrimary = $newPrimaryEmail
+                        OldPrimary = $cloudUser.UserPrincipalName
+                        NewPrimary = $newUPN
                         Status = "Success"
                         TimeUpdated = Get-Date
                     }
@@ -330,10 +330,10 @@ function Update-CloudUsers {
                     Write-Host "  Error: $_" -ForegroundColor Red
 
                     # Add to our array of failures
-                        $updatedCloudUsers += [PSCustomObject]@{
+                    $updatedCloudUsers += [PSCustomObject]@{
                         DisplayName = $cloudUser.DisplayName
-                        OldPrimary = $primaryEmail
-                        NewPrimary = $newPrimaryEmail
+                        OldPrimary = $cloudUser.UserPrincipalName
+                        NewPrimary = $newUPN
                         Status = "Failed: $_"
                         TimeUpdated = Get-Date
                     }
@@ -342,11 +342,11 @@ function Update-CloudUsers {
         }
     
     # Success & failure count
-    $successCount = ($updatedCloudUsers | Where-Object { $_.Status -eq "Success" }).Count
-    $failCount = ($updatedCloudUsers | Where-Object { $_.Status -ne "Success" }).Count
+    $successCount = @($updatedCloudUsers | Where-Object { $_.Status -eq "Success" }).Count
+    $failCount = @($updatedCloudUsers | Where-Object { $_.Status -ne "Success" }).Count
     $totalCount = $successCount + $failCount
 
-    Write-Host "CLOUD USER MIGRATION REPORT" -ForegroundColor Cyan
+    Write-Host "`nCLOUD USER MIGRATION REPORT" -ForegroundColor Cyan
     Write-Host "Total accounts processed: $totalCount" -ForegroundColor White
     Write-Host "Successful migrations: $successCount" -ForegroundColor Green
     Write-Host "Failed migrations: $failCount" -ForegroundColor Red
