@@ -11,7 +11,6 @@
 Import-Module Microsoft.Graph.Users 
 Import-Module Microsoft.Graph.Groups
 Import-Module Microsoft.Graph.Identity.SignIns
-Import-Module Microsoft.Graph.Beta.Identity.SignIns
 Import-Module ExchangeOnlineManagement
 Connect-ExchangeOnline
 Connect-MgGraph -Scopes "User.ReadWrite.All","Group.ReadWrite.All","AuditLog.Read.All"
@@ -273,7 +272,7 @@ if ($MigrateMailboxes) {
     $failCount = ($updatedUsers | Where-Object { $_.Status -ne "Success" }).Count
     $totalCount = $successCount + $failCount
 
-    Write-Host "MIGRATION REPORT" -ForegroundColor Cyan
+    Write-Host "MAILBOX MIGRATION REPORT" -ForegroundColor Cyan
     Write-Host "Total accounts processed: $totalCount" -ForegroundColor White
     Write-Host "Successful migrations: $successCount" -ForegroundColor Green
     Write-Host "Failed migrations: $failCount" -ForegroundColor Red
@@ -283,7 +282,7 @@ if ($MigrateMailboxes) {
 
     # Export results to a CSV
     $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
-    $csvPath = ".\domain_migration_results_$timestamp.csv"
+    $csvPath = ".\mailbox_migration_results_$timestamp.csv"
     $updatedUsers | Export-Csv -Path $csvPath -NoTypeInformation
     Write-Host "Results saved to $csvPath" -ForegroundColor Green
     }
